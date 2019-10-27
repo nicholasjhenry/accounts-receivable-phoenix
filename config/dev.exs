@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :accounts_receivable_phoenix, :generators, binary_id: true
+
 # Configure your database
 config :accounts_receivable_phoenix, AccountsReceivablePhoenix.Repo,
   username: "postgres",
