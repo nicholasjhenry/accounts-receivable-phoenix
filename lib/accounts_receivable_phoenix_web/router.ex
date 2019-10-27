@@ -16,7 +16,12 @@ defmodule AccountsReceivablePhoenixWeb.Router do
   scope "/", AccountsReceivablePhoenixWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", InvoiceController, :index
+    resources("/clients", ClientController)
+    resources("/invoices", InvoiceController)
+    resources("/line_items", LineItemController)
+    resources("/products", ProductController)
+    resources("/services", ServiceController)
   end
 
   # Other scopes may use custom stacks.
