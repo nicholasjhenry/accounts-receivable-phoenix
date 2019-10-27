@@ -8,7 +8,7 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
   schema "invoices" do
     field :net_days, :integer
     field :note, :string
-    belongs_to :client, Client
+    belongs_to :client_id, Client
 
     timestamps()
   end

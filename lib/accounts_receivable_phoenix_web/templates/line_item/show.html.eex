@@ -1,0 +1,23 @@
+<h1>Show Line item</h1>
+
+<ul>
+
+  <li>
+    <strong>Price override cents:</strong>
+    <%= @line_item.price_override_cents %>
+  </li>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @line_item.quantity %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @line_item.description %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.line_item_path(@conn, :edit, @line_item) %></span>
+<span><%= link "Back", to: Routes.line_item_path(@conn, :index) %></span>
