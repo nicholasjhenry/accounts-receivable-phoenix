@@ -22,6 +22,7 @@ defmodule AccountsReceivablePhoenix.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import AccountsReceivablePhoenix.DataCase
+      import AccountsReceivablePhoenix.Factory
     end
   end
 
