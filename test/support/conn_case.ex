@@ -20,6 +20,7 @@ defmodule AccountsReceivablePhoenixWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       alias AccountsReceivablePhoenixWeb.Router.Helpers, as: Routes
+      import AccountsReceivablePhoenix.Factory
 
       # The default endpoint for testing
       @endpoint AccountsReceivablePhoenixWeb.Endpoint

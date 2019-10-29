@@ -1,17 +1,6 @@
 defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
   use AccountsReceivablePhoenixWeb.ConnCase
 
-  alias AccountsReceivablePhoenix.Invoices
-
-  @create_attrs %{net_days: 42, note: "some note"}
-  @update_attrs %{net_days: 43, note: "some updated note"}
-  @invalid_attrs %{net_days: nil, note: nil}
-
-  def fixture(:invoice) do
-    {:ok, invoice} = Invoices.create_invoice(@create_attrs)
-    invoice
-  end
-
   describe "index" do
     test "lists all invoices", %{conn: conn} do
       conn = get(conn, Routes.invoice_path(conn, :index))
@@ -28,7 +17,8 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
 
   describe "create invoice" do
     test "redirects to show when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.invoice_path(conn, :create), invoice: @create_attrs)
+      create_attrs = %{net_days: 42, note: "some note", client_id: insert(:client).id}
+      conn = post(conn, Routes.invoice_path(conn, :create), invoice: create_attrs)
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.invoice_path(conn, :show, id)
@@ -38,7 +28,8 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.invoice_path(conn, :create), invoice: @invalid_attrs)
+      invalid_attrs = %{net_days: nil, note: nil}
+      conn = post(conn, Routes.invoice_path(conn, :create), invoice: invalid_attrs)
       assert html_response(conn, 200) =~ "New Invoice"
     end
   end
@@ -56,7 +47,8 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
     setup [:create_invoice]
 
     test "redirects when data is valid", %{conn: conn, invoice: invoice} do
-      conn = put(conn, Routes.invoice_path(conn, :update, invoice), invoice: @update_attrs)
+      update_attrs = %{net_days: 43, note: "some updated note"}
+      conn = put(conn, Routes.invoice_path(conn, :update, invoice), invoice: update_attrs)
       assert redirected_to(conn) == Routes.invoice_path(conn, :show, invoice)
 
       conn = get(conn, Routes.invoice_path(conn, :show, invoice))
@@ -64,7 +56,8 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, invoice: invoice} do
-      conn = put(conn, Routes.invoice_path(conn, :update, invoice), invoice: @invalid_attrs)
+      invalid_attrs = %{net_days: nil, note: nil}
+      conn = put(conn, Routes.invoice_path(conn, :update, invoice), invoice: invalid_attrs)
       assert html_response(conn, 200) =~ "Edit Invoice"
     end
   end
@@ -75,6 +68,7 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
     test "deletes chosen invoice", %{conn: conn, invoice: invoice} do
       conn = delete(conn, Routes.invoice_path(conn, :delete, invoice))
       assert redirected_to(conn) == Routes.invoice_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.invoice_path(conn, :show, invoice))
       end
@@ -82,7 +76,6 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
   end
 
   defp create_invoice(_) do
-    invoice = fixture(:invoice)
-    {:ok, invoice: invoice}
+    {:ok, invoice: insert(:invoice)}
   end
 end

@@ -1,17 +1,6 @@
 defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
   use AccountsReceivablePhoenixWeb.ConnCase
 
-  alias AccountsReceivablePhoenix.Services
-
-  @create_attrs %{name: "some name", price_cents: 42}
-  @update_attrs %{name: "some updated name", price_cents: 43}
-  @invalid_attrs %{name: nil, price_cents: nil}
-
-  def fixture(:service) do
-    {:ok, service} = Services.create_service(@create_attrs)
-    service
-  end
-
   describe "index" do
     test "lists all services", %{conn: conn} do
       conn = get(conn, Routes.service_path(conn, :index))
@@ -28,7 +17,8 @@ defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
 
   describe "create service" do
     test "redirects to show when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.service_path(conn, :create), service: @create_attrs)
+      create_attrs = %{name: "some name", price_cents: 42}
+      conn = post(conn, Routes.service_path(conn, :create), service: create_attrs)
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.service_path(conn, :show, id)
@@ -38,7 +28,8 @@ defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.service_path(conn, :create), service: @invalid_attrs)
+      invalid_attrs = %{name: nil, price_cents: nil}
+      conn = post(conn, Routes.service_path(conn, :create), service: invalid_attrs)
       assert html_response(conn, 200) =~ "New Service"
     end
   end
@@ -56,7 +47,8 @@ defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
     setup [:create_service]
 
     test "redirects when data is valid", %{conn: conn, service: service} do
-      conn = put(conn, Routes.service_path(conn, :update, service), service: @update_attrs)
+      update_attrs = %{name: "some updated name", price_cents: 43}
+      conn = put(conn, Routes.service_path(conn, :update, service), service: update_attrs)
       assert redirected_to(conn) == Routes.service_path(conn, :show, service)
 
       conn = get(conn, Routes.service_path(conn, :show, service))
@@ -64,7 +56,8 @@ defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, service: service} do
-      conn = put(conn, Routes.service_path(conn, :update, service), service: @invalid_attrs)
+      invalid_attrs = %{name: nil, price_cents: nil}
+      conn = put(conn, Routes.service_path(conn, :update, service), service: invalid_attrs)
       assert html_response(conn, 200) =~ "Edit Service"
     end
   end
@@ -75,6 +68,7 @@ defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
     test "deletes chosen service", %{conn: conn, service: service} do
       conn = delete(conn, Routes.service_path(conn, :delete, service))
       assert redirected_to(conn) == Routes.service_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.service_path(conn, :show, service))
       end
@@ -82,7 +76,6 @@ defmodule AccountsReceivablePhoenixWeb.ServiceControllerTest do
   end
 
   defp create_service(_) do
-    service = fixture(:service)
-    {:ok, service: service}
+    {:ok, service: insert(:service)}
   end
 end

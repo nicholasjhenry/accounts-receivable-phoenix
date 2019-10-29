@@ -1,17 +1,6 @@
 defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
   use AccountsReceivablePhoenixWeb.ConnCase
 
-  alias AccountsReceivablePhoenix.Clients
-
-  @create_attrs %{email: "some email", name: "some name"}
-  @update_attrs %{email: "some updated email", name: "some updated name"}
-  @invalid_attrs %{email: nil, name: nil}
-
-  def fixture(:client) do
-    {:ok, client} = Clients.create_client(@create_attrs)
-    client
-  end
-
   describe "index" do
     test "lists all clients", %{conn: conn} do
       conn = get(conn, Routes.client_path(conn, :index))
@@ -28,7 +17,8 @@ defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
 
   describe "create client" do
     test "redirects to show when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.client_path(conn, :create), client: @create_attrs)
+      create_attrs = %{email: "some email", name: "some name"}
+      conn = post(conn, Routes.client_path(conn, :create), client: create_attrs)
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.client_path(conn, :show, id)
@@ -38,7 +28,8 @@ defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.client_path(conn, :create), client: @invalid_attrs)
+      invalid_attrs = %{email: nil, name: nil}
+      conn = post(conn, Routes.client_path(conn, :create), client: invalid_attrs)
       assert html_response(conn, 200) =~ "New Client"
     end
   end
@@ -56,7 +47,8 @@ defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
     setup [:create_client]
 
     test "redirects when data is valid", %{conn: conn, client: client} do
-      conn = put(conn, Routes.client_path(conn, :update, client), client: @update_attrs)
+      update_attrs = %{email: "some updated email", name: "some updated name"}
+      conn = put(conn, Routes.client_path(conn, :update, client), client: update_attrs)
       assert redirected_to(conn) == Routes.client_path(conn, :show, client)
 
       conn = get(conn, Routes.client_path(conn, :show, client))
@@ -64,7 +56,8 @@ defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, client: client} do
-      conn = put(conn, Routes.client_path(conn, :update, client), client: @invalid_attrs)
+      invalid_attrs = %{email: nil, name: nil}
+      conn = put(conn, Routes.client_path(conn, :update, client), client: invalid_attrs)
       assert html_response(conn, 200) =~ "Edit Client"
     end
   end
@@ -75,6 +68,7 @@ defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
     test "deletes chosen client", %{conn: conn, client: client} do
       conn = delete(conn, Routes.client_path(conn, :delete, client))
       assert redirected_to(conn) == Routes.client_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.client_path(conn, :show, client))
       end
@@ -82,7 +76,6 @@ defmodule AccountsReceivablePhoenixWeb.ClientControllerTest do
   end
 
   defp create_client(_) do
-    client = fixture(:client)
-    {:ok, client: client}
+    {:ok, client: insert(:client)}
   end
 end

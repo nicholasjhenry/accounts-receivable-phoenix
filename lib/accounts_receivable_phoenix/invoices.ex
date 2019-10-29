@@ -17,8 +17,10 @@ defmodule AccountsReceivablePhoenix.Invoices do
       [%Invoice{}, ...]
 
   """
-  def list_invoices do
-    Repo.all(Invoice)
+  def list_invoices(preload \\ []) do
+    Invoice
+    |> preload(^preload)
+    |> Repo.all()
   end
 
   @doc """
@@ -35,7 +37,11 @@ defmodule AccountsReceivablePhoenix.Invoices do
       ** (Ecto.NoResultsError)
 
   """
-  def get_invoice!(id), do: Repo.get!(Invoice, id)
+  def get_invoice!(id, preload \\ []) do
+    Invoice
+    |> preload(^preload)
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a invoice.
@@ -113,8 +119,10 @@ defmodule AccountsReceivablePhoenix.Invoices do
       [%LineItem{}, ...]
 
   """
-  def list_line_items do
-    Repo.all(LineItem)
+  def list_line_items(preload \\ []) do
+    LineItem
+    |> preload(^preload)
+    |> Repo.all()
   end
 
   @doc """
@@ -131,7 +139,11 @@ defmodule AccountsReceivablePhoenix.Invoices do
       ** (Ecto.NoResultsError)
 
   """
-  def get_line_item!(id), do: Repo.get!(LineItem, id)
+  def get_line_item!(id, preload \\ []) do
+    LineItem
+    |> preload(^preload)
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a line_item.
