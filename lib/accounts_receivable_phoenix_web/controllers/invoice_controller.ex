@@ -5,7 +5,7 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceController do
   alias AccountsReceivablePhoenix.Invoices.Invoice
 
   def index(conn, _params) do
-    invoices = Invoices.list_invoices()
+    invoices = Invoices.list_invoices([:client])
     render(conn, "index.html", invoices: invoices)
   end
 
@@ -27,7 +27,7 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceController do
   end
 
   def show(conn, %{"id" => id}) do
-    invoice = Invoices.get_invoice!(id)
+    invoice = Invoices.get_invoice!(id, [:client])
     render(conn, "show.html", invoice: invoice)
   end
 

@@ -3,6 +3,7 @@
 <table>
   <thead>
     <tr>
+      <th>Client</th>
       <th>Net days</th>
       <th>Note</th>
 
@@ -12,6 +13,7 @@
   <tbody>
 <%= for invoice <- @invoices do %>
     <tr>
+      <td><%= client_link(invoice) %></td>
       <td><%= invoice.net_days %></td>
       <td><%= invoice.note %></td>
 

@@ -3,6 +3,11 @@
 <ul>
 
   <li>
+    <strong>Client</strong>
+    <%= client_link(@invoice) %>
+  </li>
+
+  <li>
     <strong>Net days:</strong>
     <%= @invoice.net_days %>
   </li>

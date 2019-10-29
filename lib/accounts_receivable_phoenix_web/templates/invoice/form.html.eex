@@ -5,6 +5,10 @@
     </div>
   <% end %>
 
+  <%= label f, :client_id %>
+  <%= select f, :client_id, all_clients() %>
+  <%= error_tag f, :client_id %>
+
   <%= label f, :net_days %>
   <%= number_input f, :net_days %>
   <%= error_tag f, :net_days %>
