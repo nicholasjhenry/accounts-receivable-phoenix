@@ -3,6 +3,21 @@
 <ul>
 
   <li>
+    <strong>Invoice:</strong>
+    <%= invoice_link(@line_item) %>
+  </li>
+
+  <li>
+    <strong>Product:</strong>
+    <%= product_link(@line_item) %>
+  </li>
+
+  <li>
+    <strong>Service:</strong>
+    <%= service_link(@line_item) %>
+  </li>
+
+  <li>
     <strong>Price override cents:</strong>
     <%= @line_item.price_override_cents %>
   </li>

@@ -5,7 +5,7 @@ defmodule AccountsReceivablePhoenixWeb.LineItemController do
   alias AccountsReceivablePhoenix.Invoices.LineItem
 
   def index(conn, _params) do
-    line_items = Invoices.list_line_items()
+    line_items = Invoices.list_line_items([:invoice, :product, :service])
     render(conn, "index.html", line_items: line_items)
   end
 
@@ -27,7 +27,7 @@ defmodule AccountsReceivablePhoenixWeb.LineItemController do
   end
 
   def show(conn, %{"id" => id}) do
-    line_item = Invoices.get_line_item!(id)
+    line_item = Invoices.get_line_item!(id, [:invoice, :product, :service])
     render(conn, "show.html", line_item: line_item)
   end
 

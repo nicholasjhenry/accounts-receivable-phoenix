@@ -3,6 +3,9 @@
 <table>
   <thead>
     <tr>
+      <th>Invoice</th>
+      <th>Product</th>
+      <th>Service</th>
       <th>Price override cents</th>
       <th>Quantity</th>
       <th>Description</th>
@@ -13,6 +16,10 @@
   <tbody>
 <%= for line_item <- @line_items do %>
     <tr>
+      <td><%= link line_item.invoice.note, to: Routes.invoice_path(@conn, :show, line_item.invoice) %></td>
+      <td><%= invoice_link(line_item) %></td>
+      <td><%= product_link(line_item) %></td>
+      <td><%= service_link(line_item) %></td>
       <td><%= line_item.price_override_cents %></td>
       <td><%= line_item.quantity %></td>
       <td><%= line_item.description %></td>

@@ -5,6 +5,18 @@
     </div>
   <% end %>
 
+  <%= label f, :invoice_id %>
+  <%= select f, :invoice_id, all_invoices() %>
+  <%= error_tag f, :invoice_id %>
+
+  <%= label f, :product_id %>
+  <%= select f, :product_id, all_products() %>
+  <%= error_tag f, :product_id %>
+
+  <%= label f, :service_id %>
+  <%= select f, :service_id, all_services() %>
+  <%= error_tag f, :service_id %>
+
   <%= label f, :price_override_cents %>
   <%= number_input f, :price_override_cents %>
   <%= error_tag f, :price_override_cents %>
