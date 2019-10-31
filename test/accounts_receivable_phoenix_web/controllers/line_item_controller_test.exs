@@ -21,7 +21,8 @@ defmodule AccountsReceivablePhoenixWeb.LineItemControllerTest do
         description: "some description",
         price_override_cents: 42,
         quantity: 42,
-        invoice_id: insert(:invoice).id
+        invoice_id: insert(:invoice).id,
+        service_id: insert(:service).id
       }
 
       conn = post(conn, Routes.line_item_path(conn, :create), line_item: create_attrs)

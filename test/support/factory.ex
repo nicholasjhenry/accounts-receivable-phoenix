@@ -39,10 +39,18 @@ defmodule AccountsReceivablePhoenix.Factory do
   end
 
   def line_item_factory do
-    %LineItem{
+    line_item = %LineItem{
       description: Faker.Lorem.sentence(),
       quantity: Faker.random_between(1, 10),
-      invoice: build(:invoice)
+      invoice: build(:invoice),
+      product: nil,
+      service: nil
     }
+
+    if Faker.random_between(0, 1) == 0 do
+      %LineItem{line_item | product: build(:product)}
+    else
+      %LineItem{line_item | service: build(:service)}
+    end
   end
 end

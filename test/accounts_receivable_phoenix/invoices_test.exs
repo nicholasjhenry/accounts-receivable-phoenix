@@ -60,12 +60,14 @@ defmodule AccountsReceivablePhoenix.InvoicesTest do
 
     test "list_line_items/0 returns all line_items" do
       line_item = insert(:line_item)
-      assert Invoices.list_line_items(invoice: [:client]) == [line_item]
+      assert Invoices.list_line_items([:product, :service, invoice: [:client]]) == [line_item]
     end
 
     test "get_line_item!/1 returns the line_item with given id" do
       line_item = insert(:line_item)
-      assert Invoices.get_line_item!(line_item.id, invoice: [:client]) == line_item
+
+      assert Invoices.get_line_item!(line_item.id, [:product, :service, invoice: [:client]]) ==
+               line_item
     end
 
     test "create_line_item/1 with valid data creates a line_item" do
@@ -73,7 +75,8 @@ defmodule AccountsReceivablePhoenix.InvoicesTest do
         description: "some description",
         price_override_cents: 42,
         quantity: 42,
-        invoice_id: insert(:invoice).id
+        invoice_id: insert(:invoice).id,
+        product_id: insert(:product).id
       }
 
       assert {:ok, %LineItem{} = line_item} = Invoices.create_line_item(valid_attrs)
@@ -131,7 +134,9 @@ defmodule AccountsReceivablePhoenix.InvoicesTest do
 
       invalid_attrs = %{description: nil, price_override_cents: nil, quantity: nil}
       assert {:error, %Ecto.Changeset{}} = Invoices.update_line_item(line_item, invalid_attrs)
-      assert line_item == Invoices.get_line_item!(line_item.id, invoice: [:client])
+
+      assert line_item ==
+               Invoices.get_line_item!(line_item.id, [:product, :service, invoice: [:client]])
     end
 
     test "delete_line_item/1 deletes the line_item" do
@@ -143,6 +148,40 @@ defmodule AccountsReceivablePhoenix.InvoicesTest do
     test "change_line_item/1 returns a line_item changeset" do
       line_item = insert(:line_item)
       assert %Ecto.Changeset{} = Invoices.change_line_item(line_item)
+    end
+
+    test "only product or service" do
+      invoice = insert(:invoice)
+      product = insert(:product)
+      service = insert(:service)
+
+      attrs = %{
+        invoice_id: invoice.id,
+        quantity: 2,
+        product_id: product.id,
+        service_id: service.id
+      }
+
+      assert {:error, %Ecto.Changeset{valid?: false, errors: errors}} =
+               Invoices.create_line_item(attrs)
+
+      assert [service_id: _, product_id: _] = errors
+    end
+
+    test "one of product or service required" do
+      invoice = insert(:invoice)
+
+      attrs = %{
+        invoice_id: invoice.id,
+        quantity: 2,
+        product_id: nil,
+        service_id: nil
+      }
+
+      assert {:error, %Ecto.Changeset{valid?: false, errors: errors}} =
+               Invoices.create_line_item(attrs)
+
+      assert [service_id: _, product_id: _] = errors
     end
   end
 end

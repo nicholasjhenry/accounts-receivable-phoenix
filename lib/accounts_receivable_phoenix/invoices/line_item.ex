@@ -31,5 +31,32 @@ defmodule AccountsReceivablePhoenix.Invoices.LineItem do
       :service_id
     ])
     |> validate_required([:quantity, :invoice_id])
+    |> validate_exactly_one_present([:product_id, :service_id])
+  end
+
+  def validate_exactly_one_present(changeset, fields) do
+    Enum.map(fields, &present?(changeset, &1))
+    |> Enum.filter(& &1)
+    |> Enum.count()
+    |> case do
+      1 ->
+        changeset
+
+      _ ->
+        Enum.reduce(
+          fields,
+          changeset,
+          &add_error(
+            &2,
+            &1,
+            "expected exactly one of [#{Enum.join(fields, ", ")}] to be present"
+          )
+        )
+    end
+  end
+
+  def present?(changeset, field) do
+    value = get_field(changeset, field)
+    value && value != ""
   end
 end
