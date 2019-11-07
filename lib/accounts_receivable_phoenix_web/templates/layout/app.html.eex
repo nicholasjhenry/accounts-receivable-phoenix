@@ -12,11 +12,15 @@
       <section class="container">
         <nav role="navigation">
           <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
+            <li><%= link "Clients", to: Routes.client_path(@conn, :index) %></li>
+            <li><%= link "Products", to: Routes.product_path(@conn, :index) %></li>
+            <li><%= link "Services", to: Routes.service_path(@conn, :index) %></li>
+            <li><%= link "Invoices", to: Routes.invoice_path(@conn, :index) %></li>
+            <li><%= link "Invoice Line Items", to: Routes.line_item_path(@conn, :index) %></li>
           </ul>
         </nav>
-        <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+        <a href="/" class="phx-logo">
+          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Frameork Logo"/>
         </a>
       </section>
     </header>
