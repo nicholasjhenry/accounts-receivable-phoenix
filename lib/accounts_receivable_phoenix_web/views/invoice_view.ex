@@ -12,4 +12,13 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceView do
 
   def client_link(%Invoice{client: %Client{name: name, id: id}}),
     do: link(name, to: Routes.client_path(AccountsReceivablePhoenixWeb.Endpoint, :show, id))
+
+  def to_money(price_in_cents) do
+    {dollars, cents} =
+      price_in_cents
+      |> Integer.to_string()
+      |> String.split_at(-2)
+
+    "$#{dollars}.#{cents}"
+  end
 end

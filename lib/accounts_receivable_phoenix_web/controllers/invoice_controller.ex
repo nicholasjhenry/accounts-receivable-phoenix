@@ -1,6 +1,7 @@
 defmodule AccountsReceivablePhoenixWeb.InvoiceController do
   use AccountsReceivablePhoenixWeb, :controller
 
+  alias AccountsReceivablePhoenix.Clients
   alias AccountsReceivablePhoenix.Invoices
   alias AccountsReceivablePhoenix.Invoices.Invoice
 
@@ -27,8 +28,46 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceController do
   end
 
   def show(conn, %{"id" => id}) do
-    invoice = Invoices.get_invoice!(id, [:client])
-    render(conn, "show.html", invoice: invoice)
+    invoice =
+      Invoices.get_invoice!(id,
+        product_line_items: :product,
+        service_line_items: :service
+      )
+
+    client = Clients.get_client!(invoice.client_id)
+
+    line_items =
+      Invoices.list_line_items([:service, :product])
+      |> Enum.filter(fn line_item -> line_item.invoice_id == invoice.id end)
+      |> Enum.group_by(fn line_item ->
+        if line_item.service_id != nil, do: :service, else: :product
+      end)
+
+    total =
+      line_items
+      |> Map.values()
+      |> List.flatten()
+      |> Enum.map(fn line_item ->
+        price =
+          line_item.price_override_cents ||
+            (line_item.service && line_item.service.price_cents) ||
+            (line_item.product && line_item.product.price_cents)
+
+        IO.inspect(price, label: :price)
+        price * line_item.quantity
+      end)
+      |> Enum.sum()
+
+    line_items =
+      %{product: [], service: []}
+      |> Map.merge(line_items)
+
+    render(conn, "show.html",
+      client: client,
+      invoice: invoice,
+      line_items: line_items,
+      total: total
+    )
   end
 
   def edit(conn, %{"id" => id}) do

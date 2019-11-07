@@ -2,6 +2,7 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
   alias AccountsReceivablePhoenix.Clients.Client
+  alias AccountsReceivablePhoenix.Invoices.LineItem
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -9,6 +10,8 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
     field :net_days, :integer
     field :note, :string
     belongs_to :client, Client
+    has_many :product_line_items, LineItem, where: [product_id: {:not, nil}]
+    has_many :service_line_items, LineItem, where: [service_id: {:not, nil}]
 
     timestamps()
   end
