@@ -44,25 +44,29 @@ defmodule AccountsReceivablePhoenix.Invoices do
   end
 
   def get_calculated_invoice!(id) do
-    query =
-      from invoice in Invoice,
-        left_join: pli in assoc(invoice, :product_line_items),
-        left_join: p in assoc(pli, :product),
-        left_join: sli in assoc(invoice, :service_line_items),
-        left_join: s in assoc(sli, :service),
-        preload: [product_line_items: {pli, product: p}, service_line_items: {sli, service: s}]
-
-    invoice =
-      query
-      |> Repo.get!(id)
-
-    invoice =
-      Map.replace!(invoice, :line_items, invoice.service_line_items ++ invoice.product_line_items)
-
-    invoice
+    id
+    |> get_invoice_by_id()
     |> Invoice.determine_due_date()
     |> Invoice.calculate_line_items()
     |> Invoice.calculate_total()
+  end
+
+  defp get_invoice_by_id(id) do
+    invoice =
+      Invoice
+      |> query_invoice_with_line_items
+      |> Repo.get!(id)
+
+    Map.replace!(invoice, :line_items, invoice.service_line_items ++ invoice.product_line_items)
+  end
+
+  def query_invoice_with_line_items(query) do
+    from invoice in query,
+      left_join: pli in assoc(invoice, :product_line_items),
+      left_join: p in assoc(pli, :product),
+      left_join: sli in assoc(invoice, :service_line_items),
+      left_join: s in assoc(sli, :service),
+      preload: [product_line_items: {pli, product: p}, service_line_items: {sli, service: s}]
   end
 
   @doc """
