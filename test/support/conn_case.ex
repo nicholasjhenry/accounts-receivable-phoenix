@@ -19,6 +19,7 @@ defmodule AccountsReceivablePhoenixWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
+      use AssertHTML
       alias AccountsReceivablePhoenixWeb.Router.Helpers, as: Routes
       import AccountsReceivablePhoenix.Factory
 
