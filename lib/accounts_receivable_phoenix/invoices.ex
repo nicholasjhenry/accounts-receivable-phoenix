@@ -63,13 +63,9 @@ defmodule AccountsReceivablePhoenix.Invoices do
       invoice
       |> Invoice.determine_due_date()
       |> Invoice.calculate_line_items()
+      |> Invoice.calculate_total()
 
-    total =
-      invoice.line_items
-      |> Enum.map(& &1.total_cents)
-      |> Enum.sum()
-
-    %{invoice: invoice, line_items: invoice.line_items, total: total}
+    %{invoice: invoice, line_items: invoice.line_items, total: invoice.total_cents}
   end
 
   @doc """

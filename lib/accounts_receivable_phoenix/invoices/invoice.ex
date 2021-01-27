@@ -13,8 +13,9 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
     has_many :product_line_items, LineItem, where: [product_id: {:not, nil}]
     has_many :service_line_items, LineItem, where: [service_id: {:not, nil}]
 
-    field :due_date, :date, virtual: true
     field :line_items, {:array, :map}, virtual: true
+    field :due_date, :date, virtual: true
+    field :total_cents, :integer, virtual: true
 
     timestamps()
   end
@@ -39,5 +40,14 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
       |> Enum.map(&LineItem.calculate/1)
 
     %{invoice | line_items: line_items}
+  end
+
+  def calculate_total(invoice) do
+    total_cents =
+      invoice.line_items
+      |> Enum.map(& &1.total_cents)
+      |> Enum.sum()
+
+    %{invoice | total_cents: total_cents}
   end
 end
