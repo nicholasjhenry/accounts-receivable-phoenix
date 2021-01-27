@@ -43,6 +43,41 @@ defmodule AccountsReceivablePhoenix.Invoices do
     |> Repo.get!(id)
   end
 
+  def get_calculated_invoice!(id) do
+    invoice =
+      get_invoice!(id,
+        product_line_items: :product,
+        service_line_items: :service
+      )
+
+    line_items =
+      list_line_items([:service, :product])
+      |> Enum.filter(fn line_item -> line_item.invoice_id == invoice.id end)
+      |> Enum.group_by(fn line_item ->
+        if line_item.service_id != nil, do: :service, else: :product
+      end)
+
+    total =
+      line_items
+      |> Map.values()
+      |> List.flatten()
+      |> Enum.map(fn line_item ->
+        price =
+          line_item.price_override_cents ||
+            (line_item.service && line_item.service.price_cents) ||
+            (line_item.product && line_item.product.price_cents)
+
+        price * line_item.quantity
+      end)
+      |> Enum.sum()
+
+    line_items =
+      %{product: [], service: []}
+      |> Map.merge(line_items)
+
+    %{invoice: invoice, line_items: line_items, total: total}
+  end
+
   @doc """
   Creates a invoice.
 
