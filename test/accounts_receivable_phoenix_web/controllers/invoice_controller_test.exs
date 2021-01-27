@@ -9,13 +9,44 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
   end
 
   describe "show" do
-    setup :create_invoice
+    setup _context do
+      invoice =
+        insert(:invoice,
+          net_days: 10,
+          inserted_at: "2020-01-01 00:00",
+          client: build(:client),
+          product_line_items: [
+            build(:line_item,
+              product: build(:product, price_cents: 1050),
+              quantity: 2,
+              service: nil,
+              invoice: nil
+            )
+          ],
+          service_line_items: [
+            build(:line_item,
+              quantity: 3,
+              product: nil,
+              service: build(:service, price_cents: 2075),
+              invoice: nil
+            )
+          ]
+        )
+
+      [invoice: invoice]
+    end
 
     test "shows an invoice", %{conn: conn, invoice: invoice} do
       conn = get(conn, Routes.invoice_path(conn, :show, invoice))
 
       html_response(conn, 200)
       |> assert_html("h1", "Show Invoice")
+      |> assert_html("[data-invoice=due-date]", text: "2020-01-11")
+      |> assert_html("[data-product=price]", text: "$10.50")
+      |> assert_html("[data-product=total]", text: "$21.00")
+      |> assert_html("[data-service=price]", text: "$20.75")
+      |> assert_html("[data-service=total]", text: "$62.25")
+      |> assert_html("[data-invoice=total]", text: "$83.25")
     end
   end
 
