@@ -5,6 +5,19 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceView do
   alias AccountsReceivablePhoenix.Clients.Client
   alias AccountsReceivablePhoenix.Invoices.Invoice
 
+  def render("show.html", %{line_items: line_items} = assigns) do
+    render_template("show.html", %{assigns | line_items: group_line_items(line_items)})
+  end
+
+  defp group_line_items(line_items) do
+    line_items =
+      Enum.group_by(line_items, fn line_item ->
+        if line_item.service_id != nil, do: :service, else: :product
+      end)
+
+    Map.merge(%{product: [], service: []}, line_items)
+  end
+
   def all_clients do
     Clients.list_clients()
     |> Enum.map(&{&1.name, &1.id})
