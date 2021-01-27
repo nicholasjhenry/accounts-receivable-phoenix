@@ -37,7 +37,8 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
   def calculate_line_items(invoice) do
     line_items =
       invoice.line_items
-      |> Enum.map(&LineItem.calculate/1)
+      |> Enum.map(&LineItem.determine_invoiced_price/1)
+      |> Enum.map(&LineItem.calculate_total/1)
 
     %{invoice | line_items: line_items}
   end

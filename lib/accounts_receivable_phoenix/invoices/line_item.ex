@@ -58,12 +58,17 @@ defmodule AccountsReceivablePhoenix.Invoices.LineItem do
     end
   end
 
-  def calculate(line_item) do
+  def determine_invoiced_price(line_item) do
     invoiceable_item = get_invoiceable_item(line_item)
     invoiced_price_cents = line_item.price_override_cents || invoiceable_item.price_cents
-    total_cents = invoiced_price_cents * line_item.quantity
 
-    %{line_item | invoiced_price_cents: invoiced_price_cents, total_cents: total_cents}
+    %{line_item | invoiced_price_cents: invoiced_price_cents}
+  end
+
+  def calculate_total(line_item) do
+    total_cents = line_item.invoiced_price_cents * line_item.quantity
+
+    %{line_item | total_cents: total_cents}
   end
 
   defp get_invoiceable_item(%{service_id: service_id} = line_item) when not is_nil(service_id) do
