@@ -43,6 +43,20 @@ defmodule AccountsReceivablePhoenix.Invoices do
     |> Repo.get!(id)
   end
 
+  @doc """
+  Gets a fully materialized invoice with line items and totals calculated.
+
+  Raises `Ecto.NoResultsError` if the Invoice does not exist.
+
+  ## Examples
+
+      iex> get_calculated_invoice!(123)
+      %Invoice{total_cents: 100, line_items: [%LineItem{total_cents: 50}, %LineItem{total_cents: 50}]}
+
+      iex> get_calculated_invoice!(456)
+      ** (Ecto.NoResultsError)
+
+  """
   def get_calculated_invoice!(id) do
     id
     |> get_invoice_by_id()
