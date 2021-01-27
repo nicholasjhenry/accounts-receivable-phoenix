@@ -68,14 +68,7 @@ defmodule AccountsReceivablePhoenix.Invoices do
       line_items
       |> Map.values()
       |> List.flatten()
-      |> Enum.map(fn line_item ->
-        price =
-          line_item.price_override_cents ||
-            (line_item.service_id && line_item.service.price_cents) ||
-            (line_item.product_id && line_item.product.price_cents)
-
-        price * line_item.quantity
-      end)
+      |> Enum.map(& &1.total_cents)
       |> Enum.sum()
 
     line_items =
