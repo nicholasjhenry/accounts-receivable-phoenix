@@ -8,6 +8,17 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceControllerTest do
     end
   end
 
+  describe "show" do
+    setup :create_invoice
+
+    test "shows an invoice", %{conn: conn, invoice: invoice} do
+      conn = get(conn, Routes.invoice_path(conn, :show, invoice))
+
+      html_response(conn, 200)
+      |> assert_html("h1", "Show Invoice")
+    end
+  end
+
   describe "new invoice" do
     test "renders form", %{conn: conn} do
       conn = get(conn, Routes.invoice_path(conn, :new))
