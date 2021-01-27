@@ -26,19 +26,20 @@
         <td><%= line_item.description %></td>
         <td data-product="price"><%= to_money(line_item.price_override_cents || line_item.product.price_cents) %></td>
         <td><%= line_item.quantity %></td>
-        <td data-product="total"><%= to_money(line_item.price_override_cents || line_item.product.price_cents * line_item.quantity) %></td>
+        <td data-product="total"><%= to_money(line_item.total_cents) %></td>
       </tr>
     <% end %>
     <tr>
       <td colspan=5><strong>Services</strong></td>
     </tr>
     <%= for line_item <- @line_items.service do %>
+
       <tr>
         <td><%= line_item.service.name %></td>
         <td><%= line_item.description %></td>
         <td data-service="price"><%= to_money(line_item.price_override_cents || line_item.service.price_cents) %></td>
         <td><%= line_item.quantity %></td>
-        <td data-service="total"><%= to_money(line_item.price_override_cents || line_item.service.price_cents * line_item.quantity) %></td>
+        <td data-service="total"><%= to_money(line_item.total_cents) %></td>
       </tr>
     <% end %>
   </tbody>
