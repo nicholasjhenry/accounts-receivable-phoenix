@@ -16,6 +16,7 @@ defmodule AccountsReceivablePhoenix.Invoices.LineItem do
     belongs_to :product, Product
     belongs_to :service, Service
 
+    field :invoiced_price_cents, :integer, virtual: true
     field :total_cents, :integer, virtual: true
 
     timestamps()
@@ -59,11 +60,10 @@ defmodule AccountsReceivablePhoenix.Invoices.LineItem do
 
   def calculate(line_item) do
     invoiceable_item = get_invoiceable_item(line_item)
+    invoiced_price_cents = line_item.price_override_cents || invoiceable_item.price_cents
+    total_cents = invoiced_price_cents * line_item.quantity
 
-    total_cents =
-      line_item.price_override_cents || invoiceable_item.price_cents * line_item.quantity
-
-    %{line_item | total_cents: total_cents}
+    %{line_item | invoiced_price_cents: invoiced_price_cents, total_cents: total_cents}
   end
 
   defp get_invoiceable_item(%{service_id: service_id} = line_item) when not is_nil(service_id) do
