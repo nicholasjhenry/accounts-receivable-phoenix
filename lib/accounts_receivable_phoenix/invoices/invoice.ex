@@ -14,6 +14,7 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
     has_many :service_line_items, LineItem, where: [service_id: {:not, nil}]
 
     field :due_date, :date, virtual: true
+    field :line_items, {:array, :map}, virtual: true
 
     timestamps()
   end
@@ -26,9 +27,17 @@ defmodule AccountsReceivablePhoenix.Invoices.Invoice do
     |> foreign_key_constraint(:client_id)
   end
 
-  def calculate(invoice) do
+  def determine_due_date(invoice) do
     due_date = Date.add(invoice.inserted_at, invoice.net_days)
 
     %{invoice | due_date: due_date}
+  end
+
+  def calculate_line_items(invoice) do
+    line_items =
+      invoice.line_items
+      |> Enum.map(&LineItem.calculate/1)
+
+    %{invoice | line_items: line_items}
   end
 end

@@ -6,7 +6,7 @@ defmodule AccountsReceivablePhoenix.Invoices do
   import Ecto.Query, warn: false
   alias AccountsReceivablePhoenix.Repo
 
-  alias AccountsReceivablePhoenix.Invoices.{Invoice, LineItem}
+  alias AccountsReceivablePhoenix.Invoices.Invoice
 
   @doc """
   Returns the list of invoices.
@@ -55,18 +55,21 @@ defmodule AccountsReceivablePhoenix.Invoices do
     invoice =
       query
       |> Repo.get!(id)
-      |> Invoice.calculate()
 
-    line_items =
-      (invoice.service_line_items ++ invoice.product_line_items)
-      |> Enum.map(&LineItem.calculate/1)
+    invoice =
+      Map.replace!(invoice, :line_items, invoice.service_line_items ++ invoice.product_line_items)
+
+    invoice =
+      invoice
+      |> Invoice.determine_due_date()
+      |> Invoice.calculate_line_items()
 
     total =
-      line_items
+      invoice.line_items
       |> Enum.map(& &1.total_cents)
       |> Enum.sum()
 
-    %{invoice: invoice, line_items: line_items, total: total}
+    %{invoice: invoice, line_items: invoice.line_items, total: total}
   end
 
   @doc """
