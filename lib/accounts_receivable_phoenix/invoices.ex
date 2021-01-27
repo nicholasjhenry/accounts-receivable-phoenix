@@ -52,7 +52,10 @@ defmodule AccountsReceivablePhoenix.Invoices do
         join: s in assoc(sli, :service),
         preload: [product_line_items: {pli, product: p}, service_line_items: {sli, service: s}]
 
-    invoice = Repo.get!(query, id)
+    invoice =
+      query
+      |> Repo.get!(id)
+      |> Invoice.calculate()
 
     line_items =
       (invoice.service_line_items ++ invoice.product_line_items)

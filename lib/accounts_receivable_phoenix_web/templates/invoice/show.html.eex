@@ -3,7 +3,7 @@
 <div id="summary">
   <p><strong>Client:</strong> <%= @client.name %></p>
   <p><strong>Attn:</strong> <%= @client.email %></p>
-  <p data-invoice="due-date"><strong>Due Date:</strong> <%= @invoice.inserted_at |> Date.add(@invoice.net_days) %></p>
+  <p data-invoice="due-date"><strong>Due Date:</strong> <%= @invoice.due_date %></p>
   <p><strong>Notes:</strong> <%= @invoice.note %></p>
 </div>
 
