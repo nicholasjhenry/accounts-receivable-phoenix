@@ -44,15 +44,18 @@ defmodule AccountsReceivablePhoenix.Invoices do
   end
 
   def get_calculated_invoice!(id) do
-    invoice =
-      get_invoice!(id,
-        product_line_items: :product,
-        service_line_items: :service
-      )
+    query =
+      from invoice in Invoice,
+        left_join: pli in assoc(invoice, :product_line_items),
+        join: p in assoc(pli, :product),
+        left_join: sli in assoc(invoice, :service_line_items),
+        join: s in assoc(sli, :service),
+        preload: [product_line_items: {pli, product: p}, service_line_items: {sli, service: s}]
+
+    invoice = Repo.get!(query, id)
 
     line_items =
-      list_line_items([:service, :product])
-      |> Enum.filter(fn line_item -> line_item.invoice_id == invoice.id end)
+      (invoice.service_line_items ++ invoice.product_line_items)
       |> Enum.group_by(fn line_item ->
         if line_item.service_id != nil, do: :service, else: :product
       end)
@@ -64,8 +67,8 @@ defmodule AccountsReceivablePhoenix.Invoices do
       |> Enum.map(fn line_item ->
         price =
           line_item.price_override_cents ||
-            (line_item.service && line_item.service.price_cents) ||
-            (line_item.product && line_item.product.price_cents)
+            (line_item.service_id && line_item.service.price_cents) ||
+            (line_item.product_id && line_item.product.price_cents)
 
         price * line_item.quantity
       end)
