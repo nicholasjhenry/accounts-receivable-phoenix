@@ -47,7 +47,7 @@
     <tr>
       <th colspan=3>&nbsp;</th>
       <th>Total</th>
-      <td data-invoice="total"><%= to_money(@total) %>
+      <td data-invoice="total"><%= to_money(@invoice.total_cents) %>
     </tr>
   </tfoot>
 </table>

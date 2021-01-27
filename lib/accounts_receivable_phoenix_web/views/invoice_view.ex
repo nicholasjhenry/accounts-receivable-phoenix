@@ -5,8 +5,11 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceView do
   alias AccountsReceivablePhoenix.Clients.Client
   alias AccountsReceivablePhoenix.Invoices.Invoice
 
-  def render("show.html", %{line_items: line_items} = assigns) do
-    render_template("show.html", %{assigns | line_items: group_line_items(line_items)})
+  def render("show.html", %{invoice: invoice} = assigns) do
+    render_template(
+      "show.html",
+      Map.put(assigns, :line_items, group_line_items(invoice.line_items))
+    )
   end
 
   defp group_line_items(line_items) do

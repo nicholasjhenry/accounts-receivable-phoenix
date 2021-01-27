@@ -59,13 +59,10 @@ defmodule AccountsReceivablePhoenix.Invoices do
     invoice =
       Map.replace!(invoice, :line_items, invoice.service_line_items ++ invoice.product_line_items)
 
-    invoice =
-      invoice
-      |> Invoice.determine_due_date()
-      |> Invoice.calculate_line_items()
-      |> Invoice.calculate_total()
-
-    %{invoice: invoice, line_items: invoice.line_items, total: invoice.total_cents}
+    invoice
+    |> Invoice.determine_due_date()
+    |> Invoice.calculate_line_items()
+    |> Invoice.calculate_total()
   end
 
   @doc """

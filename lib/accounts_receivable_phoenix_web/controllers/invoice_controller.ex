@@ -28,17 +28,10 @@ defmodule AccountsReceivablePhoenixWeb.InvoiceController do
   end
 
   def show(conn, %{"id" => id}) do
-    %{invoice: invoice, line_items: line_items, total: total} =
-      Invoices.get_calculated_invoice!(id)
-
+    invoice = Invoices.get_calculated_invoice!(id)
     client = Clients.get_client!(invoice.client_id)
 
-    render(conn, "show.html",
-      client: client,
-      invoice: invoice,
-      line_items: line_items,
-      total: total
-    )
+    render(conn, "show.html", client: client, invoice: invoice)
   end
 
   def edit(conn, %{"id" => id}) do
