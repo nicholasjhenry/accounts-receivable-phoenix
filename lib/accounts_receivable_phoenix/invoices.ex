@@ -47,9 +47,9 @@ defmodule AccountsReceivablePhoenix.Invoices do
     query =
       from invoice in Invoice,
         left_join: pli in assoc(invoice, :product_line_items),
-        join: p in assoc(pli, :product),
+        left_join: p in assoc(pli, :product),
         left_join: sli in assoc(invoice, :service_line_items),
-        join: s in assoc(sli, :service),
+        left_join: s in assoc(sli, :service),
         preload: [product_line_items: {pli, product: p}, service_line_items: {sli, service: s}]
 
     invoice =
